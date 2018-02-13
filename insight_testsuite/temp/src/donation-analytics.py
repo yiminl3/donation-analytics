@@ -4,13 +4,13 @@ import datetime
 import math
 
 ## input_itcont_location store the input path specify in the second argument
-input_itcont_location =  sys.argv[1] #"/Users/yimingliu/Desktop/donation-analytics/input/itcont.txt" #sys.argv[1]
+input_itcont_location =  sys.argv[1]
 
 ## input_itcont_location store the percentile file path specify in the third argument
-input_percentile_location = sys.argv[2] #"/Users/yimingliu/Desktop/donation-analytics/input/percentile.txt" #sys.argv[2]
+input_percentile_location = sys.argv[2]
 
 ## output_location store the output file path specify in the forth argument
-output_location = sys.argv[3] #"/Users/yimingliu/Desktop/donation-analytics/output/repeat_donors.txt" #sys.argv[3]
+output_location = sys.argv[3] 
 
 ## cmte_id is a nested dictionary, 1st level key is the cmte_id, 2nd level key is
 ## tuple (year,zipcode) to store the contribution for specific cmte_id per year
@@ -192,36 +192,43 @@ def get_percentile():
 
 ## main function
 if __name__ == "__main__":
-
-    ## get the percentile specify in the file
-    percentile = get_percentile()
-
+    
     ## open both the input and output file
     output_file = open(output_location,"w")
     itcont_file = open(input_itcont_location,"r")
 
-    ## read each line in the file and extract the needed information
-    while True:
-        line = itcont_file.readline()
-        if not line:
-            break
-        info = extract_donation_info(line)
-        if not info:
-            continue
-        donor_key = (info["name"],info["zip_code"])
+    ## get the percentile specify in the file
+    percentile = get_percentile()
 
-        ## everytime extract a record, update the frequency of the donor
-        add_donor_freq_dict(donor_key)
+    ## if percentile is not valid, print the info
+    if (percentile > 100) or (percentile < 1):
+        output_file.write("percentile is invalid")
 
-        ## check if the current record newer than oldest record for this donor
-        newer_than_oldest_record = check_if_newer_than_oldest_record(info,donor_key)
+    ## if percentile is valid, proceed the rest program
+    else:
+        
+        ## read each line in the file and extract the needed information
+        while True:
+            line = itcont_file.readline()
+            if not line:
+                break
+            info = extract_donation_info(line)
+            if not info:
+                continue
+            donor_key = (info["name"],info["zip_code"])
 
-        ##update the donor oldest record
-        update_donor_oldest_donate_date(info)
+            ## everytime extract a record, update the frequency of the donor
+            add_donor_freq_dict(donor_key)
 
-        ## check if the donor is repeat donor and output the information if need.
-        handle_repeat_donor(info,donor_key,percentile,output_file,newer_than_oldest_record)
+            ## check if the current record newer than oldest record for this donor
+            newer_than_oldest_record = check_if_newer_than_oldest_record(info,donor_key)
 
-    ## close both the input and output file    
+            ##update the donor oldest record
+            update_donor_oldest_donate_date(info)
+
+            ## check if the donor is repeat donor and output the information if need.
+            handle_repeat_donor(info,donor_key,percentile,output_file,newer_than_oldest_record)
+
+        ## close both the input and output file    
     itcont_file.close()
     output_file.close()
