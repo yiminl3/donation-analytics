@@ -31,7 +31,7 @@ Program Over View:
      if the data is invalid, the program will continue to the next line of data without interrupting the program running( using try...except structure). if the percentile is invalid, it will write the error message into the file and exit the program.
      
      
-  4. Testing
+  4. Testing:
      I designed multiple test cases that include different kind of data error and the program is able to output the appropriate information. I also used the 2018 contribution individual file downloaded from FEC webstie and it successfully process the data(1.46GB) and output the correct information in the output file.  
      
 
